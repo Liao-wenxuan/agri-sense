@@ -43,8 +43,23 @@ app.get('/api/health', (_req, res) => {
 })
 
 // ===== 静态前端（生产模式：与 web/dist 合并到容器）=====
-const publicDir = process.env.PUBLIC_DIR || path.join(__dirname, '../../public')
 import fs from 'fs'
+const _publicCandidates = [
+  process.env.PUBLIC_DIR,
+  path.join(__dirname, 'public'),
+  path.join(__dirname, '../public'),
+  path.join(process.cwd(), 'public'),
+  path.join(process.cwd(), 'server/dist/public'),
+  path.join(process.cwd(), 'server/public'),
+].filter(Boolean) as string[]
+const publicDir =
+  _publicCandidates.find((p) => {
+    try {
+      return fs.existsSync(p)
+    } catch {
+      return false
+    }
+  }) || _publicCandidates[1]
 if (fs.existsSync(publicDir)) {
   app.use(express.static(publicDir))
   // SPA fallback：所有非 /api 请求都返回 index.html
