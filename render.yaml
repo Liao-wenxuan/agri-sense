@@ -1,21 +1,21 @@
-# Render 一键部署（render.com · 0 成本 free 层）
-# 使用方法：
-# 1. 推到 GitHub（已完成）
-# 2. render.com 控制台 → New + → Blueprint → 选 Liao-wenxuan/agri-sense
-# 3. Render 自动识别本文件并部署
+# Render 一键部署（render.com · 0 成本 free 层 · 用 Render 原生 Node runtime）
+# 不用 Docker！Render 自动处理 native modules（prebuilt binary）
 
 services:
   - type: web
     name: agri-sense
-    runtime: docker
+    runtime: node
     plan: free
+    region: oregon
+    buildCommand: "npm --prefix web install --legacy-peer-deps --no-audit --no-fund && npm --prefix web run build && npm --prefix server install --legacy-peer-deps --no-audit --no-fund && npm --prefix server run build && cp -r web/dist server/dist/public"
+    startCommand: "node server/dist/index.js"
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: "3000"
+        value: "10000"
       - key: DB_PATH
         value: /tmp/agri.db
       - key: SIMULATOR
@@ -23,4 +23,4 @@ services:
       - key: SIMULATOR_INTERVAL
         value: "5000"
       - key: JWT_SECRET
-        value: agri-sense-2026-render-deploy-secret-change-in-production
+        value: agri-sense-2026-render-deploy-secret
