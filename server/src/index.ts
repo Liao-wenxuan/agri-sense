@@ -14,6 +14,7 @@ import statsRouter from './routes/stats'
 import anomalyRouter from './routes/anomaly'
 import { config } from './lib/config'
 import { preloadDetectors } from './services/anomaly'
+import { ensureSeed } from './seed'
 
 const app = express()
 const server = http.createServer(app)
@@ -90,6 +91,7 @@ if (process.env.SIMULATOR === 'true') {
 }
 
 // ===== 启动 =====
+ensureSeed()  // 首次部署时自动种子用户/农场/大棚/传感器/告警规则
 preloadDetectors()  // 从 DB 回填每个传感器的滑动窗口（启动一次）
 server.listen(config.PORT, () => {
   console.log(`\n🌱 AgriSense Server`)
