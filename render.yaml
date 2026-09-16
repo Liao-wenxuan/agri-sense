@@ -1,5 +1,5 @@
-# Render 一键部署（render.com · 0 成本 free 层 · 用 Render 原生 Node runtime）
-# 不用 Docker！Render 自动处理 native modules（prebuilt binary）
+# Render 一键部署（0 成本 free · 原生 Node runtime）
+# 不用 Docker！Render 自动用 prebuilt native modules
 
 services:
   - type: web
@@ -7,8 +7,8 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: "npm --prefix web install --legacy-peer-deps --no-audit --no-fund && npm --prefix web run build && npm --prefix server install --legacy-peer-deps --no-audit --no-fund && npm --prefix server run build && cp -r web/dist server/dist/public"
-    startCommand: "node server/dist/index.js"
+    buildCommand: "cd web && npm install --legacy-peer-deps --no-audit --no-fund && npm run build && cd ../server && npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
+    startCommand: "cp -r web/dist server/dist/public && cd server && node dist/index.js"
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
