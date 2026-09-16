@@ -1,0 +1,77 @@
+# ===== 依赖 =====
+node_modules/
+**/node_modules/
+**/node_modules
+
+# ===== 构建产物 =====
+dist/
+**/dist/
+.vite/
+**/.vite/
+
+# ===== 数据库（永远不提交） =====
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+data.db
+data/agri.db
+server/data/agri.db
+server/data/agri.db-journal
+server/data/agri.db-wal
+server/data/agri.db-shm
+data/
+!data/.gitkeep
+!data/generate_dataset.py
+!data/analyze.py
+!data/test_*.py
+!data/stress_test.py
+!data/seed.js
+!data/seed_data.json
+!data/agri.db
+
+# ===== 环境变量 =====
+.env
+.env.*
+!.env.example
+
+# ===== 日志 =====
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+server/*.log
+server/srv.out.log
+server/srv.err.log
+web/vite.out.log
+web/vite.err.log
+simulator/sim.out.log
+simulator/sim.err.log
+
+# ===== 编辑器 =====
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ===== 临时文件 =====
+*.tmp
+*.bak
+*.swp
+*~
+
+# ===== Vite 缓存 =====
+.eslintcache
+.parcel-cache
+.cache
+
+# ===== TypeScript =====
+*.tsbuildinfo
+
+# ===== 备份 =====
+data.db.bak
+agri-sense.zip

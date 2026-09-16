@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  agri-sense:
+    build: .
+    image: agri-sense:latest
+    container_name: agri-sense
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - DB_PATH=/app/data/agri.db
+      - JWT_SECRET=change-me-in-production
+      # 取消注释下面这行启动内置 simulator（同进程推数据）
+      # - SIMULATOR=true
+    volumes:
+      - agri-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  agri-data:
+    name: agri-sense-data

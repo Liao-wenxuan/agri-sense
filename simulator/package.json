@@ -1,0 +1,14 @@
+{
+  "name": "agri-sense-simulator",
+  "version": "0.1.0",
+  "description": "AgriSense 模拟数据生成器 - 模拟 IoT 设备上报",
+  "main": "simulator.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node simulator.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.0"
+  }
+}
