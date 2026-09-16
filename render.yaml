@@ -1,27 +1,26 @@
-# Render 一键部署（render.com）
+# Render 一键部署（render.com · 0 成本 free 层）
 # 使用方法：
-# 1. 推到 GitHub
-# 2. render.com 控制台 → New → Blueprint → 连这个仓库
-# 3. Render 自动识别 render.yaml 并部署
+# 1. 推到 GitHub（已完成）
+# 2. render.com 控制台 → New + → Blueprint → 选 Liao-wenxuan/agri-sense
+# 3. Render 自动识别本文件并部署
 
 services:
   - type: web
     name: agri-sense
     runtime: docker
-    plan: starter   # 最低 $7/月，可换 free（有冷启动）
+    plan: free
     healthCheckPath: /api/health
+    autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3000
+        value: "3000"
       - key: DB_PATH
-        value: /var/data/agri.db
-      - key: JWT_SECRET
-        generateValue: true   # Render 自动生成 32 字符随机串
+        value: /tmp/agri.db
       - key: SIMULATOR
-        value: "true"          # 容器内同进程跑模拟器
-    disk:                          # 持久化 SQLite
-      name: agri-data
-      mountPath: /var/data
-      sizeGB: 1
+        value: "true"
+      - key: SIMULATOR_INTERVAL
+        value: "5000"
+      - key: JWT_SECRET
+        value: agri-sense-2026-render-deploy-secret-change-in-production
