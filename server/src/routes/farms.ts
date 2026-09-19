@@ -7,8 +7,9 @@ router.use(requireAuth)
 
 // ===== 农场 =====
 // 挂载点 /api/farms，所以这里用根路径
-router.get('/', (req, res) => {
-  const farms = db.prepare('SELECT * FROM farms WHERE owner_id = ? ORDER BY id DESC').all(req.userId)
+// 演示场景：所有登录用户共享查看同一份 demo 数据（不再按 owner 过滤）
+router.get('/', (_req, res) => {
+  const farms = db.prepare('SELECT * FROM farms ORDER BY id DESC').all()
   res.json(farms)
 })
 
@@ -25,11 +26,7 @@ router.get('/greenhouses', (req: any, res) => {
   const { farm_id } = req.query
   const list = farm_id
     ? db.prepare('SELECT * FROM greenhouses WHERE farm_id = ? ORDER BY id').all(farm_id)
-    : db.prepare(`
-        SELECT g.* FROM greenhouses g
-        JOIN farms f ON g.farm_id = f.id
-        WHERE f.owner_id = ? ORDER BY g.id
-      `).all(req.userId)
+    : db.prepare(`SELECT g.* FROM greenhouses g JOIN farms f ON g.farm_id = f.id ORDER BY g.id`).all()
   res.json(list)
 })
 

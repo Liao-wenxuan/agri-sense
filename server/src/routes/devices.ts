@@ -7,18 +7,19 @@ const router = Router()
 router.use(requireAuth)
 
 // ===== 设备列表（含传感器） =====
+// 演示场景：所有登录用户共享查看
 router.get('/', (req: any, res) => {
   const { greenhouse_id, status } = req.query
   let sql = `
     SELECT d.*, g.name AS greenhouse_name, g.farm_id
     FROM devices d
     JOIN greenhouses g ON d.greenhouse_id = g.id
-    JOIN farms f ON g.farm_id = f.id
-    WHERE f.owner_id = ?
   `
-  const params: any[] = [req.userId]
-  if (greenhouse_id) { sql += ' AND d.greenhouse_id = ?'; params.push(greenhouse_id) }
-  if (status) { sql += ' AND d.status = ?'; params.push(status) }
+  const params: any[] = []
+  const conditions: string[] = []
+  if (greenhouse_id) { conditions.push('d.greenhouse_id = ?'); params.push(greenhouse_id) }
+  if (status) { conditions.push('d.status = ?'); params.push(status) }
+  if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ')
   sql += ' ORDER BY d.id'
   const devices = db.prepare(sql).all(...params) as any[]
 

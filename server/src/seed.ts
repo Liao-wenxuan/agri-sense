@@ -100,7 +100,37 @@ export function ensureSeed(): void {
     }
   }
 
-  console.log(`✅ Seed 完成: 1 农场 / ${GHS.length} 大棚 / ${GHS.length} 采集器 / ${GHS.length * METRICS.length} 传感器`)
+  // 给每个传感器灌 30 个历史数据点（过去 2.5 分钟，5s 间隔）
+  // 这样 IForest 立即可用（要求 >10 点），算法对比页/历史图都有现成数据
+  backfillSensorData(30)
+
+  console.log(`✅ Seed 完成: 1 农场 / ${GHS.length} 大棚 / ${GHS.length} 采集器 / ${GHS.length * METRICS.length} 传感器（含历史数据回填）`)
+}
+
+function backfillSensorData(pointsPerSensor = 30) {
+  const sensorRows = db.prepare(`SELECT s.id AS sid, s.metric, s.range_min, s.range_max FROM sensors s`).all() as Array<{
+    sid: number
+    metric: string
+    range_min: number
+    range_max: number
+  }>
+  const insert = db.prepare(`INSERT INTO sensor_data (sensor_id, value, ts, quality_flag) VALUES (?, ?, ?, 1)`)
+  const intervalMs = 5000
+  const baseTs = Date.now() - pointsPerSensor * intervalMs
+  for (const s of sensorRows) {
+    const [mn, mx] = [s.range_min ?? 0, s.range_max ?? 100]
+    const baseVal = mn + (mx - mn) * 0.5
+    for (let i = 0; i < pointsPerSensor; i++) {
+      // 加入正常波动（±5%）+ 一个异常峰（最后一点 ±30%）让异常检测有东西可看
+      let v = baseVal + (Math.random() - 0.5) * (mx - mn) * 0.05
+      if (i === pointsPerSensor - 1 && (s.metric === 'temperature' || s.metric === 'co2')) {
+        v = mx * 0.92 + Math.random() * (mx - mn) * 0.05
+      }
+      const ts = new Date(baseTs + i * intervalMs).toISOString().slice(0, 19).replace('T', ' ')
+      insert.run(s.sid, Number(v.toFixed(2)), ts)
+    }
+  }
+  console.log(`📊 已为 ${sensorRows.length} 个传感器回填 ${pointsPerSensor} 个历史数据点`)
 }
 
 // 如果被直接运行（`tsx src/seed.ts`）则执行
