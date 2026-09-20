@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 const form = ref({ email: '', password: '' })
 const loading = ref(false)
 
@@ -24,6 +25,15 @@ async function handleLogin() {
     loading.value = false
   }
 }
+
+// 演示模式自动登录：URL 加 ?demo=auto 自动用 demo 凭证登录跳转
+onMounted(() => {
+  if (route.query.demo === 'auto') {
+    form.value.email = 'demo@agri.local'
+    form.value.password = 'admin123'
+    handleLogin()
+  }
+})
 </script>
 
 <template>
