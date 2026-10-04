@@ -107,7 +107,24 @@ export async function sendAlertEmail(alert: any) {
     console.log(`📧 [Email Sent] ${alert.message}`)
     return { sent: true }
   } catch (err: any) {
-    console.error('[Email Error]', err?.message || err)
-    return { sent: false, reason: err?.message || 'send_failed' }
+    // 打印完整诊断信息（code / response / stack）方便排查 Render SMTP 出站拦截
+    console.error('[Email Error]', {
+      message: err?.message,
+      code: err?.code,
+      responseCode: err?.responseCode,
+      command: err?.command,
+      errno: err?.errno,
+      syscall: err?.syscall,
+      address: err?.address,
+      port: err?.port,
+    })
+    return {
+      sent: false,
+      reason: err?.message || 'send_failed',
+      code: err?.code,
+      errno: err?.errno,
+      address: err?.address,
+      port: err?.port,
+    }
   }
 }
