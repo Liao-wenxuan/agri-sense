@@ -43,6 +43,27 @@ app.get('/api/health', (_req, res) => {
   })
 })
 
+// ===== 临时调试：看 Render 是否把 SMTP env 传给进程（无密码）=====
+app.get('/api/_debug/env', (_req, res) => {
+  res.json({
+    processEnv: {
+      SMTP_HOST: process.env.SMTP_HOST || null,
+      SMTP_PORT: process.env.SMTP_PORT || null,
+      SMTP_USER: process.env.SMTP_USER || null,
+      SMTP_PASS_len: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0,
+      SMTP_FROM: process.env.SMTP_FROM || null,
+      NODE_ENV: process.env.NODE_ENV || null,
+    },
+    configSMTP: {
+      host: config.SMTP.host || null,
+      port: config.SMTP.port,
+      user: config.SMTP.user || null,
+      pass_len: config.SMTP.pass ? config.SMTP.pass.length : 0,
+      from: config.SMTP.from || null,
+    },
+  })
+})
+
 // ===== 静态前端（生产模式：与 web/dist 合并到容器）=====
 import fs from 'fs'
 const _publicCandidates = [
