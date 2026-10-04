@@ -3,6 +3,14 @@ import jwt from 'jsonwebtoken'
 import db from '../lib/db'
 import { config } from '../lib/config'
 
+// 扩展 Express Request 类型，让中间件挂的属性可被路由访问
+declare module 'express-serve-static-core' {
+  interface Request {
+    userId?: number
+    userRole?: string
+  }
+}
+
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
