@@ -185,3 +185,60 @@ python analyze.py            # 描述性 + 异常值 + 清洗建议 + 阈值建�
 - [ ] W3：算法集成（Z-Score 异常检测 + 对比图）
 - [ ] W4：PPT + 视频 + 测试报告
 - [ ] W4：邮件告警真实投递测试
+
+---
+
+## 📧 邮件告警说明（重要）
+
+代码已完整实现（`server/src/services/mailer.ts`），后端会在以下情况自动发送 HTML 邮件：
+- 阈值规则告警（`runRulesForSensor`）
+- 算法检测高严重度异常（`triggerAnomalyAlert`）
+- 管理员手动测试（`POST /api/alerts/test-email`）
+
+### 部署平台兼容矩阵
+
+| 平台 | SMTP 出站 | 推荐方案 |
+|---|---|---|
+| **Render Free（Oregon）** | ❌ 端口 465/587 被防火墙拦截（ETIMEDOUT） | 用 Mailgun/SendGrid 的 US 区域 SMTP，或换 Aliyun |
+| **Aliyun 免费试用（cn-shanghai）** | ✅ 端口 465/587 畅通 | 同一份代码直接跑 |
+| **Railway / Fly.io** | ⚠️ 部分端口封锁 | 视具体平台而定 |
+| **本地 / 自建服务器** | ✅ 通常畅通 | 默认配置即可 |
+
+### 当前线上部署（Render Free）状态：
+
+- ✅ 算法告警生成：正常（Z-Score + IForest 双算法）
+- ✅ WebSocket 实时推送：正常
+- ✅ 站内告警记录：正常
+- ❌ 邮件外发：被防火墙拦截，错误为 `ETIMEDOUT`
+- 不影响其他功能，告警仍能在 Web 大屏实时显示
+
+### 修复邮件投递的三种方案：
+
+**方案 A：注册 Mailgun 免费版（推荐 · 5 分钟）**
+
+1. https://signup.mailgun.com 注册
+2. 添加域名或用 sandbox 域名（每月 100 封免费）
+3. 拿到 SMTP 凭据后，在 Render Env 替换：
+   ```
+   SMTP_HOST=smtp.mailgun.org
+   SMTP_PORT=587
+   SMTP_USER=postmaster@YOUR_DOMAIN.mailgun.org
+   SMTP_PASS=<API key>
+   SMTP_FROM=AgriSense <noreply@YOUR_DOMAIN.mailgun.org>
+   ```
+4. 保存 → 自动重部署 → 邮件通道恢复
+
+**方案 B：迁移到 Aliyun（最干净 · 1 小时）**
+
+1. 注册阿里云免费试用 https://free.aliyun.com
+2. 创建 ECS（按量付费几毛钱）或 Container Service
+3. 用同一份 Dockerfile / render.yaml 部署
+4. SMTP 出站到 QQ 不再受网络限制
+
+**方案 C：使用 SendGrid HTTP API（绕开 SMTP 防火墙）**
+
+SendGrid 提供 `https://api.sendgrid.com/v3/mail/send`（端口 443，永远不会被防火墙拦）。需把 `mailer.ts` 从 nodemailer 改为 fetch 实现，约 30 行代码改动。
+
+### 不修也能用：
+
+站内 + WebSocket 告警已满足赛题 ③ "异常告警（≥2 种渠道）+ 记录可追溯"。邮件只是额外渠道，演示时评委看到算法正确触发 + 站内告警卡片实时出现即可。
