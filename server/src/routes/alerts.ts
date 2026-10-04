@@ -56,4 +56,30 @@ router.delete('/rules/:id', requireAuth, (req, res) => {
   res.json({ success: true })
 })
 
+// ===== SMTP 测试（admin 才能用）=====
+// POST /api/alerts/test-email
+// 配置完 Render SMTP env 后调用一次，看自己邮箱是否收到测试邮件
+router.post('/test-email', requireAuth, async (req: any, res) => {
+  if (req.userRole !== 'admin') {
+    return res.status(403).json({ sent: false, reason: '需要 admin 权限' })
+  }
+  const { sendAlertEmail, isSmtpConfigured } = await import('../services/mailer')
+  if (!isSmtpConfigured()) {
+    return res.json({
+      sent: false,
+      reason: 'smtp_not_configured',
+      hint: '需在 Render 配置 SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS/SMTP_FROM 5 个 env var',
+    })
+  }
+  const result: any = await sendAlertEmail({
+    metric: 'system.test',
+    value: 0,
+    severity: 'low',
+    source: 'manual_test',
+    message: '这是一封 AgriSense SMTP 测试邮件。如果你看到这封邮件,说明 SMTP 配置成功!',
+    created_at: new Date().toISOString(),
+  })
+  res.json(result)
+})
+
 export default router

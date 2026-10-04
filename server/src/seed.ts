@@ -4,6 +4,12 @@
  */
 import bcrypt from 'bcryptjs'
 import db from './lib/db'
+import { isSmtpConfigured } from './services/mailer'
+
+// 默认告警通道：未配 SMTP 时只走 WebSocket，配了就同时发邮件
+const DEFAULT_CHANNELS = JSON.stringify(
+  isSmtpConfigured() ? ['websocket', 'email'] : ['websocket']
+)
 
 type GHConfig = { name: string; crop: string; area: number }
 type SensorConfig = { metric: string; unit: string; range: [number, number] }
@@ -95,7 +101,7 @@ export function ensureSeed(): void {
       for (const r of RULES[s.metric] || []) {
         db.prepare(
           `INSERT INTO alert_rules (sensor_id, metric, op, threshold, severity, channels) VALUES (?, ?, ?, ?, ?, ?)`
-        ).run(sensorId, r.metric, r.op, r.threshold, r.severity, JSON.stringify(['websocket']))
+        ).run(sensorId, r.metric, r.op, r.threshold, r.severity, DEFAULT_CHANNELS)
       }
     }
   }

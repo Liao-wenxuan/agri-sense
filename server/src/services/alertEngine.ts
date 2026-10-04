@@ -108,6 +108,12 @@ export function triggerAnomalyAlert(input: {
   }
 
   io.emit('alert', alert)
+
+  // 算法告警也支持邮件通知（与规则告警共用通道，由 SMTP 是否配置决定）
+  import('./mailer').then(({ sendAlertEmail, isSmtpConfigured }) => {
+    if (isSmtpConfigured()) sendAlertEmail(alert)
+  })
+
   console.log(`🧠🚨 [Algorithm Alert] ${message}`)
 }
 
