@@ -20,8 +20,16 @@ function getTransporter() {
   transporter = nodemailer.createTransport({
     host: config.SMTP.host,
     port: config.SMTP.port,
+    // 465 = implicit TLS；587 = STARTTLS（部分云平台 465 出口被拦，587 更稳）
     secure: config.SMTP.port === 465,
+    requireTLS: config.SMTP.port === 587,
     auth: { user: config.SMTP.user, pass: config.SMTP.pass },
+    // 显式缩短超时，避免请求挂死
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
+    // QQ SMTP 部分出口对自签证书敏感，放宽校验
+    tls: { rejectUnauthorized: false },
   })
   return transporter
 }
