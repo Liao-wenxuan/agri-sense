@@ -20,15 +20,16 @@ server/data/agri.db
 server/data/agri.db-journal
 server/data/agri.db-wal
 server/data/agri.db-shm
-data/
-!data/.gitkeep
-!data/generate_dataset.py
-!data/analyze.py
-!data/test_*.py
-!data/stress_test.py
-!data/seed.js
-!data/seed_data.json
-!data/agri.db
+
+# 注意：这里只忽略数据库「文件」，不忽略 data/ 「目录」
+# Git 规则：一旦父目录被 xxx/ 排除，下面的 !data/xxx 反选规则全部失效。
+# 早期版本写了 data/ + !data/generate_dataset.py，导致数据集脚本和 CSV 永远提交不上去。
+# 现在改为精确忽略 agri.db，数据集脚本与 CSV 正常入库（比赛要求提交实验数据）。
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+data/__pycache__/
 
 # ===== 环境变量 =====
 .env
