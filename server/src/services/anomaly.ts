@@ -43,6 +43,16 @@ const DEFAULT_CONFIG: AnomalyConfig = {
 }
 
 // 不同指标的合理阈值（基于数据集分位数）
+//
+// ⚠️ 已知待优化项（见 docs/03-算法设计报告.md §4.4 窗口敏感性分析）：
+// 本表 windowSize 的单位是「采样点数」，而采样间隔在不同部署下不同：
+//   - 离线数据集  data/*.csv        : 10 分钟/点 → 窗口 12 ≈ 2 小时基线
+//   - 线上 simulatorRunner.ts      : 5 秒/点    → 窗口 1440 ≈ 2 小时基线
+// 两者的物理基线时长相同，但点数差 120 倍。当前 100 点在线上仅 ≈8 分钟基线，
+// 在离线上却是 ≈16.7 小时（跨越昼夜，导致检出率从 91.7% 掉到 62.7%）。
+// 结论：窗口长度必须按「物理时长」而非固定点数配置，建议后续改为按
+// sampling_interval × 目标基线时长 动态计算（目标基线取 2~6 小时）。
+// 在完成线上验证前保持原值，避免改变已跑通的演示系统行为。
 const METRIC_CONFIGS: Record<string, AnomalyConfig> = {
   temperature:   { windowSize: 100, zThreshold: 2.5, minWindow: 20 },  // 温度波动大，阈值放宽
   humidity:      { windowSize: 100, zThreshold: 3,   minWindow: 20 },
