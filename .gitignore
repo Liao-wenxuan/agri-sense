@@ -76,3 +76,9 @@ Thumbs.db
 # ===== 备份 =====
 data.db.bak
 agri-sense.zip
+
+# ===== Windows 保留设备名误建文件 =====
+# PowerShell 里 '> NUL' 不会像 cmd 那样丢弃输出，会真的创建一个名为 NUL 的
+# 保留设备名文件（reparse point），且可恢复删除工具会拒绝删除它。
+# 忽略掉以免持续污染 git status。
+NUL
