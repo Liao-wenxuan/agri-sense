@@ -15,7 +15,16 @@ export const useThemeStore = defineStore(
     const mode = ref<ThemeMode>('light')
 
     function apply(m: ThemeMode) {
-      document.documentElement.setAttribute('data-theme', m)
+      const root = document.documentElement
+      root.setAttribute('data-theme', m)
+      // Element Plus 2.8 的官方暗色变量挂在 `html.dark` 下，
+      // 不加这个 class，组件（表格 hover 行 / 标签 / 弹层）会回落成浅色调色板
+      root.classList.toggle('dark', m === 'dark')
+    }
+
+    /** 立即按当前 mode 应用一次（首屏挂载前调用，避免浅色闪烁） */
+    function applyNow() {
+      apply(mode.value)
     }
 
     function toggle() {
@@ -32,7 +41,7 @@ export const useThemeStore = defineStore(
     // 模式变化时同步到 DOM
     watch(mode, (m) => apply(m), { immediate: false })
 
-    return { mode, toggle, set }
+    return { mode, toggle, set, applyNow }
   },
   {
     persist: {
