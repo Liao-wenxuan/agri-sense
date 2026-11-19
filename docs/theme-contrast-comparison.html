@@ -70,7 +70,8 @@ const EP_LIGHT = {
          ['success', '#67c23a', '#f0f9eb'], ['warning', '#e6a23c', '#fdf6ec'],
          ['danger', '#f56c6c', '#fef0f0']],
   buttons: [['primary', '#ffffff', '#409eff'], ['success', '#ffffff', '#67c23a'],
-            ['warning', '#ffffff', '#e6a23c'], ['danger', '#ffffff', '#f56c6c']],
+            ['warning', '#ffffff', '#e6a23c'], ['danger', '#ffffff', '#f56c6c'],
+            ['info', '#ffffff', '#909399']],
   placeholder: ['#a8abb2', '#ffffff']
 };
 const EP_DARK = {
@@ -78,7 +79,8 @@ const EP_DARK = {
          ['success', '#67c23a', '#1c2518'], ['warning', '#e6a23c', '#292218'],
          ['danger', '#f56c6c', '#2a1d1d']],
   buttons: [['primary', '#ffffff', '#409eff'], ['success', '#ffffff', '#67c23a'],
-            ['warning', '#ffffff', '#e6a23c'], ['danger', '#ffffff', '#f56c6c']],
+            ['warning', '#ffffff', '#e6a23c'], ['danger', '#ffffff', '#f56c6c'],
+            ['info', '#ffffff', '#909399']],
   placeholder: ['#8d9095', '#141414']
 };
 
@@ -87,25 +89,29 @@ const A_LIGHT = {
          ['success', '#166534', '#f0f9eb'], ['warning', '#b45309', '#fdf6ec'],
          ['danger', '#b91c1c', '#fef0f0']],
   buttons: [['primary', '#ffffff', '#3375b9'], ['success', '#ffffff', '#3a7d1e'],
-            ['warning', '#ffffff', '#b45309'], ['danger', '#ffffff', '#b91c1c']],
+            ['warning', '#ffffff', '#b45309'], ['danger', '#ffffff', '#b91c1c'],
+            ['info', '#ffffff', '#6b7280']],
   placeholder: ['#6b7280', '#ffffff']
 };
 const A_DARK = {
   tags: EP_DARK.tags,
   buttons: [['primary', '#ffffff', '#3375b9'], ['success', '#ffffff', '#3a7d1e'],
-            ['warning', '#ffffff', '#b45309'], ['danger', '#ffffff', '#b91c1c']],
+            ['warning', '#ffffff', '#b45309'], ['danger', '#ffffff', '#b91c1c'],
+            ['info', '#ffffff', '#6b7280']],
   placeholder: ['#8d9095', '#141414']
 };
 const B_LIGHT = {
   tags: A_LIGHT.tags,
   buttons: [['primary', '#0d1117', '#409eff'], ['success', '#0d1117', '#67c23a'],
-            ['warning', '#0d1117', '#e6a23c'], ['danger', '#0d1117', '#f56c6c']],
+            ['warning', '#0d1117', '#e6a23c'], ['danger', '#0d1117', '#f56c6c'],
+            ['info', '#0d1117', '#909399']],
   placeholder: ['#6b7280', '#ffffff']
 };
 const B_DARK = {
   tags: EP_DARK.tags,
   buttons: [['primary', '#0d1117', '#409eff'], ['success', '#0d1117', '#67c23a'],
-            ['warning', '#0d1117', '#e6a23c'], ['danger', '#0d1117', '#f56c6c']],
+            ['warning', '#0d1117', '#e6a23c'], ['danger', '#0d1117', '#f56c6c'],
+            ['info', '#0d1117', '#909399']],
   placeholder: ['#8d9095', '#141414']
 };
 
@@ -274,7 +280,9 @@ const ratioHex = (fg, bg) => ratio(parseHex(fg), parseHex(bg));
     '<b>方案 A</b>：浅色主题标签换成同色系深色字（蓝 800 / 绿 800 / 灰 600 / 琥珀 700 / 红 700），彩色按钮底色改深一档、白字不变。观感：标签更沉、按钮饱和度下降。',
     '<b>方案 B</b>：标签同 A；彩色按钮保留 EP 的鲜艳底色，文字从白改成近黑（#0d1117）。观感：颜色最跳，但「深色字 + 亮蓝/亮绿按钮」是反直觉的，评委第一眼可能觉得怪。',
     '<b>方案 C</b>：按主题各取最优 —— 浅色主题底色浅，用 A 的「深底白字」；暗色主题底色深，用 B 的「鲜艳底近黑字」，亮色按钮在深底上更跳也更好读。',
-    '<b>两种方案都不改</b>：Element Plus 出厂绿/蓝/琥珀/红本身就是这样，任何用 EP 的项目都是这个观感；改色属于设计决策而非缺陷修复。'
+    '<b>两种方案都不改</b>：Element Plus 出厂绿/蓝/琥珀/红本身就是这样，任何用 EP 的项目都是这个观感；改色属于设计决策而非缺陷修复。',
+    '<b>实施结果</b>：已按<b>方案 C</b> 落地（2026-11-19）。落地时在方案基础上额外补了两项同类缺口：info 按钮（浅色 #6b7280 白字 4.83:1、暗色 #909399 近黑字 6.15:1）、浅色主题表头文字（EP 出厂 3.08:1 → 与暗色对齐用 --text-1，17.85:1）。',
+    '<b>回归防线</b>：<code>docs/contrast-audit.ps1</code> 会解析构建产物 CSS、按作用域解 var() 链，逐项算 WCAG 比值，退出码只对自研项负责。'
   ].map(s => '<li>' + s + '</li>').join('');
 });
 </script>
