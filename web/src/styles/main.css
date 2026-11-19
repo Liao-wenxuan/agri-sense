@@ -272,6 +272,103 @@ html.dark[data-theme="dark"] {
   border-color: var(--border);
 }
 
+/* ============ Element Plus 色板加固（方案 C） ============ */
+/*
+ * 依据 docs/theme-contrast-comparison.html 的实测对比（阈值 4.5:1）：
+ *   浅色主题 —— 标签文字改同色系深色（蓝 800 / 绿 800 / 灰 600 / 琥珀 700 / 红 700），
+ *               彩色按钮改深底白字：白字对比度 2.19~2.90 -> 4.79~6.47
+ *   暗色主题 —— 标签沿用 EP 官方暗色调色板（5.24~7.18 本就达标），
+ *               彩色按钮保留鲜艳底色、文字改近黑：白字 2.19~2.90 -> 6.53~8.65
+ * 两套主题都不改项目自有绿色品牌 token。
+ * is-text / is-link / is-plain 变体必须排除，否则链接型按钮会被改成近黑字。
+ */
+
+/* ---- 浅色主题：输入框占位符 ---- */
+[data-theme="light"] {
+  --el-text-color-placeholder: #6b7280;
+}
+
+/* ---- 浅色主题：表头文字（EP 出厂用 secondary，3.08:1 不达标），与暗色对齐 ---- */
+[data-theme="light"] .el-table {
+  --el-table-header-text-color: var(--text-1);
+}
+
+/* ---- 浅色主题：标签文字 ---- */
+[data-theme="light"] .el-tag.el-tag--primary { --el-tag-text-color: #1e40af; }
+[data-theme="light"] .el-tag.el-tag--info    { --el-tag-text-color: #4b5563; }
+[data-theme="light"] .el-tag.el-tag--success { --el-tag-text-color: #166534; }
+[data-theme="light"] .el-tag.el-tag--warning { --el-tag-text-color: #b45309; }
+[data-theme="light"] .el-tag.el-tag--danger  { --el-tag-text-color: #b91c1c; }
+
+/* ---- 浅色主题：彩色按钮改深底白字 ---- */
+[data-theme="light"] .el-button--primary:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-bg-color: #3375b9;
+  --el-button-border-color: #3375b9;
+  --el-button-hover-bg-color: #2a598a;
+  --el-button-hover-border-color: #2a598a;
+  --el-button-active-bg-color: #213d5b;
+  --el-button-active-border-color: #213d5b;
+}
+[data-theme="light"] .el-button--success:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-bg-color: #3a7d1e;
+  --el-button-border-color: #3a7d1e;
+  --el-button-hover-bg-color: #2f6a19;
+  --el-button-hover-border-color: #2f6a19;
+  --el-button-active-bg-color: #24530f;
+  --el-button-active-border-color: #24530f;
+}
+[data-theme="light"] .el-button--warning:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-bg-color: #b45309;
+  --el-button-border-color: #b45309;
+  --el-button-hover-bg-color: #92400e;
+  --el-button-hover-border-color: #92400e;
+  --el-button-active-bg-color: #78350f;
+  --el-button-active-border-color: #78350f;
+}
+[data-theme="light"] .el-button--danger:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-bg-color: #b91c1c;
+  --el-button-border-color: #b91c1c;
+  --el-button-hover-bg-color: #991b1b;
+  --el-button-hover-border-color: #991b1b;
+  --el-button-active-bg-color: #7f1d1d;
+  --el-button-active-border-color: #7f1d1d;
+}
+[data-theme="light"] .el-button--info:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-bg-color: #6b7280;
+  --el-button-border-color: #6b7280;
+  --el-button-hover-bg-color: #4b5563;
+  --el-button-hover-border-color: #4b5563;
+  --el-button-active-bg-color: #374151;
+  --el-button-active-border-color: #374151;
+}
+
+/* ---- 暗色主题：彩色按钮保留鲜艳底色，文字改近黑 ---- */
+html.dark[data-theme="dark"] .el-button--primary:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-text-color: var(--bg-page);
+  --el-button-hover-text-color: var(--bg-page);
+  --el-button-active-text-color: var(--bg-page);
+}
+html.dark[data-theme="dark"] .el-button--success:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-text-color: var(--bg-page);
+  --el-button-hover-text-color: var(--bg-page);
+  --el-button-active-text-color: var(--bg-page);
+}
+html.dark[data-theme="dark"] .el-button--warning:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-text-color: var(--bg-page);
+  --el-button-hover-text-color: var(--bg-page);
+  --el-button-active-text-color: var(--bg-page);
+}
+html.dark[data-theme="dark"] .el-button--danger:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-text-color: var(--bg-page);
+  --el-button-hover-text-color: var(--bg-page);
+  --el-button-active-text-color: var(--bg-page);
+}
+html.dark[data-theme="dark"] .el-button--info:not(.is-text):not(.is-link):not(.is-plain) {
+  --el-button-text-color: var(--bg-page);
+  --el-button-hover-text-color: var(--bg-page);
+  --el-button-active-text-color: var(--bg-page);
+}
+
 /* ============ 表单辅助 ============ */
 .form-label {
   font-size: 12px;
